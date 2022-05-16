@@ -12,6 +12,11 @@
     if (User.Identity.IsAuthenticated)  
         currentUser = UserManager.Users.Single(u => u.Email == User.Identity.Name);
     
+    string GetNormalizedDescription(string description)
+    {
+        return description.Length < 200 ? description : description.Substring(0, 200) + "...";
+    }
+    
     string GetClassForThemes(string theme)
     {
         switch (theme)
@@ -67,7 +72,7 @@
                 <img src="@(ImageUrlBase + item.FileName)" class="card-img-top" alt="item image" style="object-fit: cover; height: 12rem;">
                 <div class="card-body">
                     <h5 class="card-title"><a href="~/item/@item.Id" class="fs-5">@item.Title</a></h5>
-                    <p class="card-text">@item.Description</p>
+                    <p class="card-text">@GetNormalizedDescription(item.Description)</p>
                 </div>
             </div>
             </div>
