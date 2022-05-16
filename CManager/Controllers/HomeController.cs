@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CManager.Models;
 using CManager.ViewModels;
-using HigLabo.Core;
+using Korzh.EasyQuery.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -59,9 +59,9 @@ public class HomeController : Controller
     }
 
     List<Item> FullTextSearch(string searchString)
-    {
+    {   
         var resultItems = new List<Item>();
-        foreach (var item in _context.Items.Where(i => i.Title.Contains(searchString) || i.Description.Contains(searchString)))
+        foreach (var item in _context.Items.FullTextSearchQuery(searchString).ToList())
             resultItems.Add(item);
         
         return resultItems;

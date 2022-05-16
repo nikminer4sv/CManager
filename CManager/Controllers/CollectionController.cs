@@ -258,6 +258,8 @@ public class CollectionController : Controller
         Item item = _db.Items.First(i => i.Id == itemId);
         int collectionId = item.CollectionId;
         _db.Items.Remove(item);
+        List<Comment> comments = _context.Comments.Where(c => c.ItemId == itemId).ToList();
+        _db.Comments.RemoveRange(comments);
         _db.SaveChanges();
         return Redirect("~/collection/" + collectionId);
     }

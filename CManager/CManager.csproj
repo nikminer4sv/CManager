@@ -71,6 +71,7 @@
       <PackageReference Include="Dropbox.Api" Version="6.27.0" />
       <PackageReference Include="HigLabo.Net" Version="6.1.0" />
       <PackageReference Include="Korzh.EasyQuery" Version="7.2.1" />
+      <PackageReference Include="Korzh.EasyQuery.Linq" Version="7.2.1" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.4" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="6.0.5" />
