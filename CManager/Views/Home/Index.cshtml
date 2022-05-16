@@ -1,0 +1,62 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+@inject IConfiguration Config
+@{
+    ViewData["Title"] = "Collections";
+    User? user = null;
+    if (User.Identity!.IsAuthenticated)
+        user = UserManager.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+    ApplicationDbContext context = (ApplicationDbContext)ViewBag.Context;
+    string ImageUrlBase = Config["ImageUrlBase"];
+    List<Collection> collections = context.Collections.ToList();
+    collections.Reverse();
+
+    string GetNormalizedDescription(string description)
+    {
+        return description.Length < 200 ? description : description.Substring(0, 200) + "...";
+    }
+
+    string GetClassForThemes(string theme)
+    {
+        switch (theme)
+        {
+            case "alcohol":
+            {
+                return "lng-ThemeAlcohol";
+                break;
+            }
+            case "books":
+            {
+                return "lng-ThemeBooks";
+                break;
+            }
+            case "films":
+            {
+                return "lng-ThemeFilms";
+                break;
+            }
+        }
+        return "";
+    }
+
+}
+
+@foreach (var collection in collections)
+{
+    <div theme-dark="text-white bg-dark" theme-light="text-dark bg-white" class="card bg-white mb-3 border-white ">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="@(ImageUrlBase + collection.FileName)" class="img-fluid rounded-start" alt="collection image" style="object-fit: cover; height: 16rem;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <a href="~/collection/@collection.Id" class="fs-1"><h1 class="card-title">@collection.Title</h1></a>
+                    <h4 class="card-text"><span class="lng-Theme">Theme</span>: <span class="@GetClassForThemes(@collection.Theme)">@collection.Theme</span>.</h4>
+                    <p class="card-text"><span class="lng-Description">Description</span>: @GetNormalizedDescription(collection.Description)</p>
+                    <p class="card-text"><span class="lng-Author">Author</span>: @(context.Users.FirstOrDefault(u => u.Id == collection.AuthorId)?.NickName)</p>
+                    <i><p class="card-text"><span class="lng-LastEditDate">Last edit date</span>: @collection.LastEditDate.</p></i>
+                </div>
+            </div>
+        </div>
+    </div>
+}

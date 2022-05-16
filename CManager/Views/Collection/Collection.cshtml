@@ -1,0 +1,74 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CManager.Models.Collection
+@inject IConfiguration Config
+@inject UserManager<User> UserManager
+
+@{
+    string ImageUrlBase = Config["ImageUrlBase"];
+    ApplicationDbContext context = (ApplicationDbContext) ViewBag.Context;
+    List<Item> items = context.Items.Where(i => i.CollectionId == Model.Id).ToList();
+    User? currentUser = null;
+    if (User.Identity.IsAuthenticated)  
+        currentUser = UserManager.Users.Single(u => u.Email == User.Identity.Name);
+    
+    string GetClassForThemes(string theme)
+    {
+        switch (theme)
+        {
+            case "alcohol":
+            {
+                return "lng-ThemeAlcohol";
+                break;
+            }
+            case "books":
+            {
+                return "lng-ThemeBooks";
+                break;
+            }
+            case "films":
+            {
+                return "lng-ThemeFilms";
+                break;
+            }
+        }
+        return "";
+    }
+}
+
+<div class="card">
+    <img src="@(ImageUrlBase + Model.FileName)" class="card-img" alt="collection image">
+    <div class="card-img-overlay" style="padding: 0!important;" >
+        <h1 style="font-size: 5em;background: rgba(0,0,0,0.8);" class="text-white card-title text-center">@Model.Title</h1>
+    </div>
+    <h3 class="p-1"><span class="lng-Theme">Theme</span>: <span class="@GetClassForThemes(@Model.Theme)">@Model.Theme</span></h3>
+</div>
+@if (User.Identity.IsAuthenticated && UserManager.IsInRoleAsync(currentUser, "admin").Result || User.Identity.IsAuthenticated && Model.AuthorId == context.Users.First(u => u.Email == User.Identity.Name).Id)
+{
+    <form class="d-inline-block mt-3" asp-action="DeleteCollection" asp-controller="Collection">
+        <input type="hidden" name="collectionId" value="@Model.Id"/>
+        <button type="submit" class="btn btn-danger"><span class="lng-Delete">Delete</span></button>
+    </form>
+    <button class="btn btn-success" onclick="window.location.replace(window.location.origin + '/collection/@Model.Id/AddItem')"><span class="lng-AddItem">Add item</span></button>
+}
+<hr/>
+<div class="body">
+    <p>@Model.Description</p>
+    <p><i>@Model.LastEditDate</i></p>
+</div>
+
+<h2 class="text-center text-white bg-success text-uppercase lng-Items">Items</h2>
+<div class="row row-cols-1 row-cols-md-2 row-cols-xxl-4 g-4">
+    @foreach (var item in items)
+    {
+        <div class="col">
+            <div class="card mx-2" style="width: 18rem;">
+                <img src="@(ImageUrlBase + item.FileName)" class="card-img-top" alt="item image" style="object-fit: cover; height: 12rem;">
+                <div class="card-body">
+                    <h5 class="card-title"><a href="~/item/@item.Id" class="fs-5">@item.Title</a></h5>
+                    <p class="card-text">@item.Description</p>
+                </div>
+            </div>
+            </div>
+    }
+</div>

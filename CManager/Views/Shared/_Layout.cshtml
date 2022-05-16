@@ -1,0 +1,198 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<User> UserManager
+
+@{
+    User? user = null;
+    if (User.Identity.IsAuthenticated)
+        user = UserManager.Users.Single(u => u.Email == User.Identity.Name);
+    
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" type="text/css" href="~/css/style.css">
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/6b19d4961f.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div theme-dark="bg-dark" theme-light="bg-light" class="superNav border-bottom py-2 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="centerOnMobile">
+                <button id="changeTheme"><i class="fa-solid fa-sun"></i></button>
+                <select class="me-3 border-0 bg-light" data-lng="en" id="lang-select">
+                    <option value="en">EN</option>
+                    <option value="ru">RU</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- LOGIN FORM -->
+<div class="card border-0 shadow" id="loginForm">
+    <div class="card-body">
+        <a href="#" onclick="hideLoginForm()">
+            <i class="fa-solid fa-xmark fs-4 text-dark float-end"></i>
+        </a>
+        <div class="clearfix"></div>
+        <div class="text-center">
+            <svg class="mx-auto my-3 bi bi-person-circle" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+            </svg>
+        </div>
+        <form method="post" asp-controller="Account" asp-action="Login">
+            <input type="email" name="Email" class="form-control my-4 py-2" placeholder="Email"/>
+            <input type="password" name="Password" class="form-control my-4 py-2" placeholder="Password"/>
+            <div class="text-center mt-3">
+                <button class="btn btn-success text-uppercase fw-bold lng-Login">Login</button>
+                <a href="#" onclick="showRegisterForm()" class="nav-link text-dark lng-DontHaveAnAccount">Don't have an account yet?</a>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- REGISTER FORM -->
+<div class="card border-0 shadow" id="registerForm">
+    <div class="card-body">
+        <a href="#" onclick="hideRegisterForm()">
+            <i class="fa-solid fa-xmark fs-4 text-dark float-end"></i>
+        </a>
+        <div class="clearfix"></div>
+        <div class="text-center">
+            <svg class="mx-auto my-3 bi bi-person-circle" xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+            </svg>
+        </div>
+        <form method="post" asp-action="Register" asp-controller="Account">
+            <input type="text" name="FirstName" class="form-control col-6 my-4 py-2" placeholder="Firstname"/>
+            <input type="text" name="LastName" class="form-control my-4 py-2" placeholder="Lastname"/>
+            <input type="text" name="NickName" class="form-control my-4 py-2" placeholder="Username"/>
+            <input type="email" name="Email" class="form-control my-4 py-2" placeholder="Email"/>
+            <input type="password" name="Password" class="form-control my-4 py-2" placeholder="Password"/>
+            <div class="text-center mt-3">
+                <button class="btn btn-success text-uppercase fw-bold lng-Register">Register</button>
+                <a href="#" onclick="showLoginForm()" class="nav-link text-dark lng-HaveAnAccount">Already have an account?</a>
+            </div>
+        </form>
+    </div>
+</div>
+<nav theme-dark="bg-dark navbar-dark" theme-light="bg-white navbar-light" class="navbar navbar-expand-lg bg-white sticky-top navbar-light p-3 shadow-sm" style="border-bottom: 1px solid white;">
+    <div class="container">
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            <i class="fa-solid fa-book-journal-whills me-2"></i> <strong>CMANAGER</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <form method="POST" asp-action="Search" asp-controller="Home">
+        <div class="mx-auto my-3 d-lg-none d-sm-block d-xs-block">
+            <div class="input-group">
+                <span class="border-success input-group-text bg-success text-white">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                
+                <input type="text" class="form-control border-succes" name="searchString" style="color:#7a7a7a">
+                <button type="submit" class="btn btn-success text-white lng-Search">Search</button>
+                
+            </div>
+        </div>
+        </form>
+        <div class=" collapse navbar-collapse" id="navbarNavDropdown">
+            <form method="POST" asp-action="Search" asp-controller="Home">
+            <div class="ms-auto d-none d-lg-block">
+                <div class="input-group">
+                    
+                    <span class="border-success input-group-text bg-success text-white">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" class="form-control border-success" name="searchString" style="color:#7a7a7a">
+                    <button class="btn btn-success text-white lng-Search">Search</button>
+                    
+                </div>
+            </div>
+            </form>
+            <ul class="navbar-nav ms-auto ">
+                <li class="nav-item">
+                    <a class="nav-link mx-2 text-uppercase active lng-Collections" aria-current="page" asp-controller="Home" asp-action="Index">Collections</a>
+                </li>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link mx-2 text-uppercase lng-CreateCollection" asp-controller="Collection" asp-action="CreateCollection">Create collection</a>
+                    </li>
+                }
+                
+                <li class="nav-item">
+                    <a class="nav-link mx-2 text-uppercase lng-About" asp-controller="Home" asp-action="About">About</a>
+                </li>
+                
+            </ul>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                <ul class="navbar-nav ms-auto ">
+                    <div class="dropdown nav-item">
+                        <a class="dropdown-toggle text-uppercase nav-link" href="#" role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-circle-user me-1"></i> <span class="lng-Account">Account</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item lng-Profile" asp-controller="Home" asp-action="Profile">Profile</a></li>
+                            @if (UserManager.IsInRoleAsync(user, "admin").Result)
+                            {
+                                <li><a class="dropdown-item lng-AdminPanel" asp-controller="AdminPanel" asp-action="AdminPanel">Admin panel</a></li>
+                            }
+                            <li><a class="dropdown-item lng-Logout" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </ul>
+            }
+            else
+            {
+                <ul class="navbar-nav ms-auto my-auto">
+                    <li class="text-uppercase">
+                        <a class="nav-link fs-6" href="#" onclick="showLoginForm()"><span class="lng-Login">Login</span></a>
+                    </li>
+                    <li class="text-uppercase">
+                        <a class="nav-link fs-6 lng-Register" href="#" onclick="showRegisterForm()"><span class="lng-Register">Register</span></a>
+                    </li>
+                </ul>
+            }
+
+
+        </div>
+    </div>
+</nav>
+<div theme-dark="theme-dark-background" theme-light="bg-white" class="container-fluid bg-white pb-5">
+    <div class="container bg-light py-3" theme-dark="bg-dark" theme-light="bg-light" style="min-height: 100vh;">
+        @RenderBody()
+    </div>
+</div>
+<footer class="border-top bg-success footer text-white">
+    <div class="container" id="footer-text">
+        &copy; CManager
+    </div>
+</footer>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="~/js/bootstrap.bundle.js"></script>
+<script src="~/js/layout.js"></script>
+<script src="~/js/ChangeLanguage.js"></script>
+<script src="~/js/ChangeTheme.js"></script>
+<script>
+    let pageTitle = (getCurrentLanguage() === 'en') ? 'Home Page - ICollections' : 'Домашняя страница - ICollections';
+         
+    document.querySelector('title').innerHTML = pageTitle;
+</script>
+</body>
+</html>

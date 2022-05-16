@@ -1,0 +1,68 @@
+@model CManager.Models.User
+@using Microsoft.AspNetCore.Identity
+@inject IConfiguration Config
+
+@{
+    ViewData["Title"] = "Feed";
+    ApplicationDbContext context = (ApplicationDbContext)ViewBag.Context;
+    string ImageUrlBase = Config["ImageUrlBase"];
+    List<Collection> collections = context.Collections.Where(c => c.AuthorId == Model.Id).ToList();
+    collections.Reverse();
+    
+    string GetNormalizedDescription(string description)
+    {
+        return description.Length < 400 ? description : description.Substring(0, 400) + "...";
+    }
+    
+    string GetClassForThemes(string theme)
+    {
+        switch (theme)
+        {
+            case "alcohol":
+            {
+                return "lng-ThemeAlcohol";
+                break;
+            }
+            case "books":
+            {
+                return "lng-ThemeBooks";
+                break;
+            }
+            case "films":
+            {
+                return "lng-ThemeFilms";
+                break;
+            }
+        }
+        return "";
+    }
+}
+
+<div class="card w-100" style="border-radius: 10px;">
+    <div class="card-body">
+        <h2 class="card-text"><span class="lng-FirstName">First name</span>: @Model.FirstName</h2>
+        <h2 class="card-text"><span class="lng-LastName">Last name</span>: @Model.LastName</h2>
+        <h2 class="card-text"><span class="lng-UserName">Username</span>: @Model.NickName</h2>
+        <h2 class="card-text">E-mail: @Model.Email</h2>
+        <h2 class="card-text"><span class="lng-RegisterDate">Register date</span>: @Model.RegisterDate</h2>
+    </div>
+</div>
+<h2 class="mt-3 mb-2"><span class="lng-MyCollections">My collections</span>:</h2>
+@foreach (var collection in collections)
+{
+    <div theme-dark="text-white bg-dark" theme-light="text-dark bg-white" class="card mb-3 text-dark bg-white border-white">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="@(ImageUrlBase + collection.FileName)" class="img-fluid rounded-start" alt="collection image">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <a href="~/collection/@collection.Id" class="fs-1"><h1 class="card-title">@collection.Title</h1></a>
+                    <h4 class="card-text"><span class="lng-Theme">Theme</span>: <span class="@GetClassForThemes(@collection.Theme)">@collection.Theme</span>.</h4>
+                    <p class="card-text"><span class="lng-Description">Description</span>: @GetNormalizedDescription(collection.Description)</p>
+                    <i><p class="card-text"><span class="lng-LastEditDate">Last edit date</span>: @collection.LastEditDate.</p></i>
+                </div>
+            </div>
+        </div>
+    </div>
+}

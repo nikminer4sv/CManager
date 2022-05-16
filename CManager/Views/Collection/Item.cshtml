@@ -1,0 +1,116 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using HigLabo.Core
+@model CManager.Models.Item
+@inject IConfiguration Config
+@inject UserManager<User> UserManager
+
+@{
+    string ImageUrlBase = Config["ImageUrlBase"];
+    ApplicationDbContext context = (ApplicationDbContext) ViewBag.Context;
+    var comments = context.Comments.Where(c => c.ItemId == Model.Id).ToList();
+    comments.Reverse();
+    Collection currentCollection = context.Collections.Single(c => c.Id == Model.CollectionId);
+    User? user = null;
+    if (User.Identity.IsAuthenticated)
+        user = UserManager.Users.Single(u => u.Email == User.Identity.Name);
+}
+
+<div class="card">
+    <img src="@(ImageUrlBase + Model.FileName)" class="card-img" alt="collection image">
+    <div class="card-img-overlay" style="padding: 0!important;" >
+        <h1 style="font-size: 5em;background: rgba(0,0,0,0.8);" class="text-white card-title text-center">@Model.Title</h1>
+    </div>
+</div>
+<hr/>
+<div class="body">
+    <p>@Model.Description</p>
+    <p><i>@Model.LastEditDate</i></p>
+    
+    @if (currentCollection.AddDates == "true")
+    {
+        <div class="theme-main-text" style="margin-bottom: 12px">
+            @{ var itemClassNameDate = "lng-" + currentCollection.Theme + "ItemDate"; }
+            <h2 class="@itemClassNameDate">Date:</h2>
+            <h3>@Model.Date</h3>
+         </div>
+    }
+
+
+
+    @if (currentCollection.AddBrands == "true")
+    {
+        <div class="theme-main-text" style="margin-bottom: 12px">
+            @{ var itemClassNameDate = "lng-" + currentCollection.Theme + "ItemBrand"; }
+            <h2 class="@itemClassNameDate">Brand:</h2>
+            <h3>@Model.Brand</h3>
+        </div>
+    }
+    
+</div>
+@if (User.Identity.IsAuthenticated && context.Collections.First(c=> c.Id == Model.CollectionId).AuthorId == context.Users.First(u => u.Email == User.Identity.Name).Id)
+{
+    <div class="d-flex float-start">
+        <form class="d-inline-block" asp-action="DeleteItem" asp-controller="Collection">
+            <input type="hidden" name="itemId" value="@Model.Id"/>
+            <button type="submit" class="btn btn-danger lng-Delete">Delete</button>
+        </form>
+    </div>
+}
+
+<form class="d-inline-block float-end" method="post" action="/Home/@Model.Id/SwitchLike">
+    <span id="LikeValue"></span>
+    <button checked="@(context.Likes.Where(l => l.ItemId == Model.Id && l.UserId == user.Id).Count() != 0 ? "true" : "false")" id="likeButton" class="btn btn-primary" onclick="SwitchLike()"><i class="fa-solid fa-heart"></i></button>
+</form>
+<div class="clearfix"></div>
+
+@if (context.Collections.Single(c => c.Id == Model.CollectionId).AddComments == "true")
+{
+    
+    @if (User.Identity.IsAuthenticated)
+    {
+   
+        <div class="input-group my-3">
+            <input type="hidden" id="itemId" value="@Model.Id"/>
+            <input id="commentToSend" type="text" class="form-control" placeholder="Comment..." aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="sendButton">Add comment</button>
+        </div>
+    }
+    
+    <h3 class="theme-main-text lng-CommentsTitle">Comments: </h3>
+
+    <div id="newComment">
+        @foreach (var comment in comments)
+        {
+            <div class="card text-dark bg-light mb-3">
+                <div class="card-header fw-bold">Author: @comment.NickName</div>
+                <div class="card-body">
+                    <p class="card-text">@comment.Content</p>
+                    <hr/>
+                    <p class="card-text"><i>@comment.PostDate</i></p>
+                </div>
+            </div>
+        }
+    </div>
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0-preview.2.22153.2/signalr.min.js"></script>
+<script src="~/js/Comments.js"></script>
+<script src="~/js/LikeSwitching.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="~/libs/jquery/dist/jquery.min.js"></script>
+
+<script>  
+    GetAmountOfLikes();
+    function GetAmountOfLikes() {
+      
+        setInterval(() => { Get(); }, 1500)
+        function Get() {
+            console.log("JQUERY GGWP");
+            let url = "/Home/GetAmountOfLikes/@Model.Id"; 
+            let $j = jQuery.noConflict();
+            $.get(url, null, function (data) {
+                $("#LikeValue").html(data);  
+            });  
+        }
+    }
+</script>  

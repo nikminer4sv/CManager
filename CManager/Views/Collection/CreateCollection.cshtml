@@ -1,0 +1,157 @@
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject UserManager<User> UserManager
+
+@model CManager.ViewModels.CreateCollectionViewModel
+
+@{
+    User? user = null;
+    if (User.Identity!.IsAuthenticated)
+        user = UserManager.Users.FirstOrDefault(u => u.Email == User.Identity.Name);
+}
+
+<link rel="stylesheet" type="text/css" href="~/css/CreateCollection.css">
+<form method="post" asp-action="CreateCollection" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly"></div>
+    <input type="hidden" name="AuthorId" value="@user?.Id" asp-for="AuthorId"/>
+    <div class="row">
+        <div class="col-2">
+            <div class="drop-zone">
+                <span class="drop-zone__prompt lng-Drag&Drop" id="text">Drop file here or click to upload</span>
+                <input type="file" name="myFile" class="drop-zone__input" accept="image/*" />
+            </div>
+        </div>
+    
+        <div class="col-10">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text lng-Title" id="basic-addon1">Title</span>
+                </div>
+                <input type="text" class="form-control" name="Title" aria-label="Title" aria-describedby="basic-addon1" asp-for="Title">
+                <span asp-validation-for="Title"></span>
+            </div>
+            
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text lng-Description" id="basic-addon1">Description</span>
+                </div>
+                <input type="text" class="form-control" name="Description" aria-label="Description" aria-describedby="basic-addon1" asp-for="Description">
+                <span asp-validation-for="Description"></span>
+            </div>
+            
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text lng-Theme" id="basic-addon1">Theme</span>
+                </div>
+                <select class="form-select" id="themeSelector" asp-for="Theme">
+                    <option value="null" class="lng-SelectTheme" selected>Select theme of your Collection</option>
+                    <option value="alcohol" class="lng-ThemeAlcohol">Alcohol</option>
+                    <option value="books" class="lng-ThemeBooks">Books</option>
+                    <option value="films" class="lng-ThemeFilms">Films</option>
+                </select>
+                <span asp-validation-for="Theme"></span>
+            </div>
+            
+            <div id="checkBoxAdditional" style="display: none">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" asp-for="IncludeDate">
+                    <label class="form-check-label" for="flexCheckDefault" id="text">
+                        Default checkbox
+                    </label>
+                </div>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" asp-for="IncludeBrand">
+                    <label class="form-check-label" for="flexCheckDefault" id="text">
+                        Default checkbox
+                    </label>
+                </div>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" asp-for="IncludeComments">
+                    <label class="form-check-label" for="flexCheckDefault" id="text">
+                        Default checkbox
+                    </label>
+                </div>
+                
+            </div>
+            <div style="width: 100px;">
+                <button type="submit" class="btn btn-success lng-Create" id="text" style="width: 100px;">Create</button>
+            </div>
+        </div>
+    </div>
+    
+</form>
+<script src="~/js/CreateCollection.js"></script>
+<script src="~/js/Drag&DropSource.js"></script>
+
+<script>
+    const keys = ["alcohol", "books", "films"];
+    const classKeys = ["date", "brand"];
+    const themeSelector = document.getElementById("themeSelector");
+    
+    themeSelector.addEventListener("change", changeContext)
+    
+    const themeList = {
+        "alcohol": {
+            "date": {
+                "class": "lng-alcoholDate",
+            },
+            "brand": {
+                "class": "lng-alcoholBrand",
+            },
+        },
+        
+        "books": {
+            "date": {
+                "class": "lng-booksDate",
+            },
+            "brand": {
+                "class": "lng-booksBrand",
+            }
+        },
+        
+        "films": {
+            "date": {
+                "class": "lng-filmsDate",
+            },
+            "brand": {
+                "class": "lng-filmsBrand",
+            }
+        }
+        
+    }
+    
+    function changeContext() {
+        let selectedTheme = themeSelector.value;
+        
+        let additionalVision = document.getElementById("checkBoxAdditional").style;
+        
+        if (selectedTheme === "null") {
+            additionalVision.display = "none";      
+            return;
+        }
+        
+        additionalVision.display = "block";
+        let additionalListLabels = document.getElementsByClassName("form-check-label");
+    
+        changeClass(additionalListLabels, selectedTheme);
+        
+        changeLanguage();
+    }    
+    
+    function changeClass(additionalListLabels, selectedTheme) {
+        for(let i = 0; i < 2; i++)
+            for(let key in keys)
+                for(let classKey in classKeys) 
+                    if(additionalListLabels[i].classList.contains(themeList[keys[key]][classKeys[classKey]]["class"]))
+                        additionalListLabels[i].classList.remove(themeList[keys[key]][classKeys[classKey]]["class"]);
+                
+    
+        for(let i = 0; i < 2; i++) 
+            additionalListLabels[i].classList.add(themeList[selectedTheme][classKeys[i]]["class"]);
+        
+        additionalListLabels[2].classList.add("lng-CollectionComments");
+    }
+ changeContext();
+</script>
