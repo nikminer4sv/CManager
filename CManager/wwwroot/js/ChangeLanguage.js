@@ -66,10 +66,6 @@ const langArr = {
         "en": "Search",
         "ru": "Искать",
     },
-    "MyCollections": {
-        "en": "My collections",
-        "ru": "Мои коллекции",
-    },
     "FirstName": {
         "en": "First name",
         "ru": "Имя",
@@ -170,6 +166,71 @@ const langArr = {
         "en": "Add comments",
         "ru": "Добавить комментарии",
     },
+    "Comments": {
+        "en": "Comments",
+        "ru": "Комментарии",
+    },
+    "alcoholItemDate": {
+        "en": "Date of manufacture:",
+        "ru": "Дата изготовления:",
+    },
+    "alcoholItemBrand": {
+        "en": "Brand:",
+        "ru": "Марка:",
+    },
+    "booksItemDate": {
+        "en": "Date of writing:",
+        "ru": "Дата написания:",
+    },
+    "booksItemBrand": {
+        "en": "Book author:",
+        "ru": "Автор книги:",
+    },
+    "filmsItemDate": {
+        "en": "Release date:",
+        "ru": "Дата премьеры:",
+    },
+    "filmsItemBrand": {
+        "en": "Studio:",
+        "ru": "Студия:",
+    },
+    "AddComment": {
+        "en": "Add comment",
+        "ru": "Прокоментировать",
+    },
+    "Block": {
+        "en": "Block",
+        "ru": "Заблокировать",
+    },
+    "Unblock": {
+        "en": "Unblock",
+        "ru": "Разблокировать",
+    },
+    "Status": {
+        "en": "Status",
+        "ru": "Статус",
+    },
+    "RegistrationDate": {
+        "en": "Registration date",
+        "ru": "Дата регистрации",
+    },
+    "RegistrationDate": {
+        "en": "Registration date",
+        "ru": "Дата регистрации",
+    },
+    "SelectAll": {
+        "en": "Select All",
+        "ru": "Выбрать все"
+    },
+    "Role": {
+        "en": "Role",
+        "ru": "Роль"
+    },
+    "Edit": {
+        "en": "Edit",
+        "ru": "Изменить"
+    },
+    
 }
 
 select.addEventListener('change',changeURLLanguage);

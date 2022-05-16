@@ -4,6 +4,7 @@ namespace CManager.ViewModels;
 
 public class ItemViewModel
 {
+    public int Id { get; set; }
     public int CollectionId { get; set; }
     
     public string? Title { get; set; }

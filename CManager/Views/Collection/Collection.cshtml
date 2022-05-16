@@ -50,9 +50,10 @@
         <button type="submit" class="btn btn-danger"><span class="lng-Delete">Delete</span></button>
     </form>
     <button class="btn btn-success" onclick="window.location.replace(window.location.origin + '/collection/@Model.Id/AddItem')"><span class="lng-AddItem">Add item</span></button>
+    <button class="btn btn-success" onclick="window.location.replace(window.location.origin + '/collection/@Model.Id/edit')"><span class="lng-Edit">edit</span></button>
 }
 <hr/>
-<div class="body">
+<div theme-dark="text-white" theme-light="text-dark" class="body text-dark">
     <p>@Model.Description</p>
     <p><i>@Model.LastEditDate</i></p>
 </div>

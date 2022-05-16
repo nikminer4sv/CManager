@@ -23,17 +23,19 @@
     </div>
 </div>
 <hr/>
-<div class="body">
-    <p>@Model.Description</p>
-    <p><i>@Model.LastEditDate</i></p>
-    
+<div theme-dark="text-white" theme-light="text-dark" class="body text-black">
+    <div class="theme-main-text" style="margin-bottom: 12px">
+        <h2><span class="lng-Description">Date</span>:</h2>
+        <h3>@Model.Description</h3>
+     </div>
+
     @if (currentCollection.AddDates == "true")
     {
         <div class="theme-main-text" style="margin-bottom: 12px">
             @{ var itemClassNameDate = "lng-" + currentCollection.Theme + "ItemDate"; }
-            <h2 class="@itemClassNameDate">Date:</h2>
+            <h2 class="@itemClassNameDate"><span>Date</span>:</h2>
             <h3>@Model.Date</h3>
-         </div>
+        </div>
     }
 
 
@@ -46,7 +48,7 @@
             <h3>@Model.Brand</h3>
         </div>
     }
-    
+
 </div>
 @if (User.Identity.IsAuthenticated && context.Collections.First(c=> c.Id == Model.CollectionId).AuthorId == context.Users.First(u => u.Email == User.Identity.Name).Id)
 {
@@ -55,11 +57,12 @@
             <input type="hidden" name="itemId" value="@Model.Id"/>
             <button type="submit" class="btn btn-danger lng-Delete">Delete</button>
         </form>
+        <a type="submit" class="btn btn-primary lng-Edit" href="~/item/@(Model.Id)/edit">Edit</a>
     </div>
 }
 
 <form class="d-inline-block float-end" method="post" action="/Home/@Model.Id/SwitchLike">
-    <span id="LikeValue"></span>
+    <span class="text-dark" theme-dark="text-white" theme-light="text-dark" id="LikeValue"></span>
     <button checked="@(context.Likes.Where(l => l.ItemId == Model.Id && l.UserId == user.Id).Count() != 0 ? "true" : "false")" id="likeButton" class="btn btn-primary" onclick="SwitchLike()"><i class="fa-solid fa-heart"></i></button>
 </form>
 <div class="clearfix"></div>
@@ -73,17 +76,17 @@
         <div class="input-group my-3">
             <input type="hidden" id="itemId" value="@Model.Id"/>
             <input id="commentToSend" type="text" class="form-control" placeholder="Comment..." aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="sendButton">Add comment</button>
+            <button class="btn btn-outline-secondary lng-AddComment" type="button" id="sendButton">Add comment</button>
         </div>
     }
     
-    <h3 class="theme-main-text lng-CommentsTitle">Comments: </h3>
+    <h3 class="theme-main-text lng-Comments text-dark" theme-dark="text-white" theme-light="text-dark">Comments: </h3>
 
     <div id="newComment">
         @foreach (var comment in comments)
         {
             <div class="card text-dark bg-light mb-3">
-                <div class="card-header fw-bold">Author: @comment.NickName</div>
+                <div class="card-header fw-bold"><span class="lng-Author">Author</span>: @comment.NickName</div>
                 <div class="card-body">
                     <p class="card-text">@comment.Content</p>
                     <hr/>

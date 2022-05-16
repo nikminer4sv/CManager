@@ -16,12 +16,14 @@ public class CollectionController : Controller
     private readonly ApplicationDbContext _db;
     private readonly IConfiguration _config;
     private UserManager<User> _userManager;
+    private ApplicationDbContext _context;
 
     public CollectionController(ApplicationDbContext context, IConfiguration config, UserManager<User> userManager)
     {
         _db = context;
         _config = config;
         _userManager = userManager;
+        _context = context;
     }
     
     [Authorize]
@@ -38,6 +40,42 @@ public class CollectionController : Controller
         return View(_db.Collections.FirstOrDefault(c => c.Id == collectionId));
     }
     
+    [HttpGet]
+    [Route("Collection/{collectionId:int}/edit")]
+    public IActionResult EditCollectionView(int collectionId)
+    {
+        Collection collection = _db.Collections.FirstOrDefault(c => c.Id == collectionId);
+        CreateCollectionViewModel collectionViewModel = new CreateCollectionViewModel
+        {
+            Id = collectionId,
+            AuthorId = collection.AuthorId,
+            Title = collection.Title,
+            Description = collection.Description,
+            Theme = collection.Theme,
+            IncludeDate = collection.AddDates,
+            IncludeBrand = collection.AddBrands,
+            IncludeComments = collection.AddComments
+        };
+        return View("EditCollection", collectionViewModel);
+    }
+
+    [HttpGet]
+    [Route("item/{itemId:int}/Edit")]
+    public IActionResult EditItemView(int itemId)
+    {
+        Item item = _context.Items.First(i => i.Id == itemId);
+        ItemViewModel itemViewModel = new ItemViewModel()
+        {
+            Id = itemId,
+            CollectionId = item.CollectionId,
+            Title = item.Title,
+            Description = item.Description,
+            Brand = item.Brand,
+            Date = item.Date
+        };
+        return View("EditItem", itemViewModel);
+    }
+    
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateCollection(CreateCollectionViewModel collectionViewModel)
@@ -51,6 +89,10 @@ public class CollectionController : Controller
         {
             var file = Request.Form.Files.First();
             fileName = SaveFileAsync(file).Result;
+        }
+        else
+        {
+            fileName = "NoImage.jpg";
         }
 
         var newCollection = new Collection
@@ -69,6 +111,38 @@ public class CollectionController : Controller
         await _db.Collections.AddAsync(newCollection);
         await _db.SaveChangesAsync();
         return await Task.Run(() => Redirect("~/collection/" + newCollection.Id));
+    }
+    
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> EditCollection(CreateCollectionViewModel collectionViewModel)
+    {
+
+        string fileName;
+        
+        if (Request.Form.Files.Count != 0)
+        {
+            var file = Request.Form.Files.First();
+            fileName = SaveFileAsync(file).Result;
+        }
+        else
+        {
+            fileName = "NoImage.jpg";
+        }
+
+        Collection collection = _context.Collections.Single(c => c.Id == collectionViewModel.Id);
+        collection.Id = collectionViewModel.Id;
+        collection.Title = collectionViewModel.Title;
+        collection.Description = collectionViewModel.Description;
+        collection.Theme = collectionViewModel.Theme;
+        collection.AddBrands = collectionViewModel.IncludeBrand;
+        collection.AddComments = collectionViewModel.IncludeComments;
+        collection.LastEditDate = DateTime.UtcNow.AddHours(3).ToString("MM/dd/yyyy H:mm");
+        collection.FileName = fileName;
+
+        _db.Collections.Update(collection);
+        await _db.SaveChangesAsync();
+        return await Task.Run(() => Redirect("~/collection/" + collectionViewModel.Id));
     }
     
     [HttpPost]
@@ -125,10 +199,13 @@ public class CollectionController : Controller
     {
         if (!ModelState.IsValid) return await Task.Run(() => View(itemViewModel));
 
-        string? FileName = null;
+        string FileName;
 
         if (Request.Form.Files.Count != 0)
             FileName = SaveFileAsync(Request.Form.Files[0]).Result;
+        else 
+            FileName = "NoImage.jpg";
+        
 
         var newItem = new Item
         {
@@ -140,11 +217,35 @@ public class CollectionController : Controller
             Brand = itemViewModel.Brand, 
             FileName = FileName,
         };
-
-        var currentCollection = _db.Collections.FirstOrDefault(c => c.Id == newItem.CollectionId);
+        
         await _db.Items.AddAsync(newItem);
         await _db.SaveChangesAsync();
         return await Task.Run(() => Redirect("~/collection/" + collectionId));
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> EditItem(ItemViewModel itemViewModel)
+    {
+        if (!ModelState.IsValid) return await Task.Run(() => View(itemViewModel));
+
+        string FileName;
+
+        if (Request.Form.Files.Count != 0)
+            FileName = SaveFileAsync(Request.Form.Files[0]).Result;
+        else 
+            FileName = "NoImage.jpg";
+
+        Item item = _context.Items.Single(i => i.Id == itemViewModel.Id);
+        item.Title = itemViewModel.Title;
+        item.Description = itemViewModel.Description;
+        item.Brand = itemViewModel.Brand;
+        item.Date = itemViewModel.Date;
+        item.LastEditDate = DateTime.UtcNow.AddHours(3).ToString("MM/dd/yyyy H:mm");
+        item.FileName = FileName;
+        
+        _db.Items.Update(item);
+        await _db.SaveChangesAsync();
+        return await Task.Run(() => Redirect("~/item/" + itemViewModel.Id));
     }
     
     [HttpPost]
@@ -192,4 +293,6 @@ public class CollectionController : Controller
         await PushToCloud(resultingName, resultingName);
         return resultingName;
     }
+    
+    
 }

@@ -8,6 +8,8 @@ public class CreateCollectionViewModel
     //Add ErrorMessage
     //Translate ErrorMessage
     
+    public int Id { get; set; }
+    
     [Required]
     public string? AuthorId { get; init; }
     

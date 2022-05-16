@@ -10,29 +10,29 @@
 <div class="container block2">
     <div class="container">
         <div style="display:flex;justify-content:start;align-items:start;">
-            <button type="button" onclick="blockCheckedContacts()" class="btn btn-dark btn-lg btn-block lng-Block">Block</button>
-            <button type="button" onclick="unblockCheckedContacts()" class="btn btn-dark btn-lg btn-block lng-Unblock">Unblock</button>
-            <button type="button" onclick="deleteCheckedContacts()" class="btn btn-dark btn-lg btn-block lng-Delete">Delete</button>
+            <button theme-dark="btn-light" theme-light="btn-dark" type="button" onclick="blockCheckedContacts()" class="btn btn-dark btn-lg btn-block lng-Block" style="margin-right: 1em;!important;">Block</button>
+            <button theme-dark="btn-light" theme-light="btn-dark" type="button" onclick="unblockCheckedContacts()" class="btn btn-dark btn-lg btn-block lng-Unblock" style="margin-right: 1em;!important;">Unblock</button>
+            <button theme-dark="btn-light" theme-light="btn-dark" type="button" onclick="deleteCheckedContacts()" class="btn btn-dark btn-lg btn-block lng-Delete">Delete</button>
         </div>
         <br/>
-        <table class="table table-hover table-responsive">
+        <table theme-dark="text-white" theme-light="text-dark" class="table table-responsive text-dark">
             <thead>
             <tr>
             </tr>
             <tr>
                 <th></th>
                 <th class="theme-main-text">Id</th>
-                <th class="col-md-3 col-xs-3 lng-FirstNameRegister theme-main-text">First Name</th>
-                <th class="col-md-3 col-xs-3 lng-LastNameRegister theme-main-text">Last Name</th>
-                <th class="col-md-3 col-xs-3 lng-EnterEmailLogin theme-main-text">E-mail</th>
-                <th class="col-md-3 col-xs-3 lng-NickNameRegister theme-main-text">Nickname</th>
-                <th class="col-md-3 col-xs-3 lng-ProfileRole theme-main-text">Role:</th>
-                <th class="col-md-3 col-xs-3 lng-ProfileRegistrationDate theme-main-text">Registration</th>
-                <th class="col-md-3 col-xs-3 lng-UserStatus theme-main-text">Status</th>
+                <th class="col-md-3 col-xs-3 lng-FirstName theme-main-text">First Name</th>
+                <th class="col-md-3 col-xs-3 lng-LastName theme-main-text">Last Name</th>
+                <th class="col-md-3 col-xs-3 lng-Email theme-main-text">E-mail</th>
+                <th class="col-md-3 col-xs-3 lng-UserName theme-main-text">Nickname</th>
+                <th class="col-md-3 col-xs-3 lng-Role theme-main-text">Role:</th>
+                <th class="col-md-3 col-xs-3 lng-RegisterDate theme-main-text">Registration</th>
+                <th class="col-md-3 col-xs-3 lng-Status theme-main-text">Status</th>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
-                    <label class="form-check-label theme-main-text" for="flexCheckIndeterminate">
-                        <b>Select all / Unselect all</b>
+                    <label class="form-check-label" for="flexCheckIndeterminate">
+                        <b theme-dark="text-white" theme-light="text-dark" class="lng-SelectAll text-dark">Select all</b>
                     </label>
                 </div>
             </tr>
